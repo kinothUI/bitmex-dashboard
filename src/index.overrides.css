@@ -1,0 +1,23 @@
+.ui.grid > .row.bold {
+  font-weight: 700;
+}
+
+.ui.grid > .row[class*="margin-bottom"] {
+  margin-bottom: 2px;
+}
+
+.ui.table thead tr:first-child > th:first-child.border-left {
+  border-left: solid 0.4em #333;
+}
+
+.ui.table td.positive-value {
+  border-left: solid 0.4em #489947;
+}
+.ui.table td.negative-value {
+  border-left: solid 0.4em #bb4f4f;
+}
+
+.ui.five.statistics.center {
+  display: block;
+  text-align: center;
+}
