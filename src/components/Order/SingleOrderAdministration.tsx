@@ -18,8 +18,10 @@ function SingleOrderAdministration(props: Props) {
   const dispatch = useDispatch();
 
   const buySide = order.side === "Buy";
+  const orderFilled = order.ordStatus === "Filled";
   const orderCanceled = order.ordStatus === "Canceled";
   const orderRejected = order.ordStatus === "Rejected";
+  const orderFilledOrCanceledOrRejected = orderFilled || orderCanceled || orderRejected;
 
   const filled = buySide
     ? `${order.orderQty - order.leavesQty}`
@@ -43,15 +45,9 @@ function SingleOrderAdministration(props: Props) {
       <Table.Cell>{timestamp}</Table.Cell>
       <Table.Cell>
         <Button
-          icon={orderRejected ? "check" : orderCanceled ? "check" : "cancel"}
-          color={orderRejected ? "green" : orderCanceled ? "green" : "red"}
-          onClick={
-            orderRejected
-              ? handleClearCanceledOrder
-              : orderCanceled
-              ? handleClearCanceledOrder
-              : handleCancelOrder
-          }
+          icon={orderFilledOrCanceledOrRejected ? "check" : "cancel"}
+          color={orderFilledOrCanceledOrRejected ? "green" : "red"}
+          onClick={orderFilledOrCanceledOrRejected ? handleClearCanceledOrder : handleCancelOrder}
           inverted
           size='tiny'
         />

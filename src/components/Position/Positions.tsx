@@ -24,7 +24,9 @@ const Positions = (props: Props) => {
     { text: "Liquidation Price" },
     { text: "Mark Price" },
     {
-      text: <Popup trigger={<div>Unrealised PnL</div>} content={`Calculated base on Mark Price`} />,
+      text: (
+        <Popup trigger={<div>Unrealised PnL</div>} content={`Calculation based on Mark Price`} />
+      ),
     },
     { text: "Realised PnL" },
   ];

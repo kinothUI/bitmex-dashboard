@@ -6,8 +6,8 @@ import "react-notifications-component/dist/theme.css";
 import { StoreState, SingleTableState } from "types";
 
 const useErrorNotifications = (order: SingleTableState<any>, ref: React.MutableRefObject<any>) => {
-  console.log("%c useErrorNotifications invoked", "color: pink");
-  console.log("%c ref in useErrorNotifications", "color: pink", ref);
+  // console.log("%c useErrorNotifications invoked", "color: pink");
+  // console.log("%c ref in useErrorNotifications", "color: pink", ref);
 
   return React.useEffect(() => {
     if (ref.current) return;
@@ -43,31 +43,6 @@ function Notification() {
   const prevOrder = React.useRef(order.content);
   const firstUpdate = React.useRef(true);
 
-  // effects running in sequence, thus
-  // setting false flag on`firstUpdate` inside last useEffect
-
-  // effect to display errors
-  // React.useLayoutEffect(() => {
-  //   if (firstUpdate.current) return;
-
-  //   const notificationId = store.addNotification({
-  //     title: order.error!.name,
-  //     message: order.error!.message,
-  //     type: "danger",
-  //     insert: "top",
-  //     container: "top-right",
-  //     animationIn: ["animated", "fadeIn"],
-  //     animationOut: ["animated", "fadeOut"],
-  //     dismiss: {
-  //       duration: 5000,
-  //       onScreen: true,
-  //       pauseOnHover: true,
-  //       click: true,
-  //     },
-  //   });
-  //   return () => store.removeNotification(notificationId);
-  // }, [order.error]);
-
   useErrorNotifications(order, firstUpdate);
 
   // effect to display successfully placed orders
@@ -79,21 +54,22 @@ function Notification() {
     }
 
     // this creates a previous order object for further diffing
-    if (!prevOrder.current.length) {
-      prevOrder.current = order.content;
-      return;
-    }
+    if (!prevOrder.current.length) prevOrder.current = order.content;
 
     // only render if a new order was accepted by bitmex api
     const lastOrder = order.content[order.content.length - 1];
-    console.log(lastOrder);
-    console.log(
-      "prevOrder.current.length === order.content.length",
-      prevOrder.current.length === order.content.length
-    );
-    console.log("astOrder.ordStatus === Rejected", lastOrder.ordStatus === "Rejected");
-    console.log("lastOrder.workingIndicator === false", lastOrder.workingIndicator === false);
+
+    // prevents notification to be rendered when:
+    // when canceled order has been cleared
+    // there is no order
+    // there was no order on previous render
+    // prevOrder length equals order length. This is the case when orders are set and the page gets reloaded
+    // self explaining
+    // workingIndicator of an order is initially false, so don't render notification
     if (
+      prevOrder.current.length > order.content.length ||
+      !order.content.length ||
+      !lastOrder ||
       prevOrder.current.length === order.content.length ||
       lastOrder.ordStatus === "Rejected" ||
       lastOrder.workingIndicator === false
@@ -111,7 +87,7 @@ function Notification() {
       container: "top-right",
       animationIn: ["animate__animated", "animate__fadeIn"],
       animationOut: ["animate__animated", "animate__fadeOut"],
-      dismiss: { duration: 25000, onScreen: true, pauseOnHover: true },
+      dismiss: { duration: 5000, onScreen: true, pauseOnHover: true },
     };
 
     notificationOptions.title = `Order Submitted`;
