@@ -1,10 +1,12 @@
+import _ from "lodash";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { Form, Button } from "semantic-ui-react";
+import { useDispatch, useSelector } from "react-redux";
+import { Form, Button, Segment } from "semantic-ui-react";
 
 import { PLACE_ORDER } from "redux/actions/order";
 import { action } from "redux/actions";
-// import { StoreState } from "types";
+import { StoreState } from "types";
+import { Dropdown } from "components/elements/form-inputs/Dropdown";
 
 interface OrderState {
   orderQty: number;
@@ -19,38 +21,43 @@ const InitialState: OrderState = {
   price: 0,
   ordType: "Limit",
   side: "",
-  symbol: "XBTUSD",
+  symbol: "",
 };
 
 function OrderForm() {
   const [order, setOrder] = React.useState(InitialState);
   const dispatch = useDispatch();
-  // const state = useSelector((state: StoreState) => state);
+  const state = useSelector((state: StoreState) => state);
 
-  const handleOnChange = (event: React.BaseSyntheticEvent) => {
+  const handleOnChange = (event: React.BaseSyntheticEvent, data: any) =>
     setOrder({ ...order, [event.target.name]: event.target.value } as OrderState);
+
+  const handleOnChangeDropdown = (event: React.BaseSyntheticEvent, data: any) =>
+    setOrder({ ...order, [data.name]: data.value } as OrderState);
+
+  const handleSubmitOrder = (event: React.BaseSyntheticEvent) => {
+    event.preventDefault();
+    dispatch(
+      action(PLACE_ORDER, { order: { ...order, side: event.target.name, symbol: order.symbol } })
+    );
   };
 
-  const handleBuy = (event: React.BaseSyntheticEvent) => {
-    event.preventDefault();
-    dispatch(action(PLACE_ORDER, { order: { ...order, side: "Buy" } }));
-  };
-
-  const handleSell = (event: React.BaseSyntheticEvent) => {
-    event.preventDefault();
-    dispatch(action(PLACE_ORDER, { order: { ...order, side: "Sell" } }));
-  };
+  const symbols = state.instrument.content.map((instrument) => ({
+    text: instrument.symbol,
+    value: instrument.symbol,
+  }));
 
   return (
-    <React.Fragment>
+    <Segment raised>
       <Form autoComplete='off'>
-        {/* <Form.Select
+        <Dropdown
           label='Instrument'
           name='symbol'
+          placeholder='--- Select your Instrument ---'
           loading={state.instrument.isLoading}
-          options={[{ text: "text", value: "value" }]}
-          onChange={handleOnChange}
-        /> */}
+          options={symbols}
+          onChange={handleOnChangeDropdown}
+        />
         <Form.Input
           type='number'
           label='Quantity'
@@ -67,10 +74,22 @@ function OrderForm() {
           onChange={handleOnChange}
           defaultValue={0}
         />
-        <Button color='green' onClick={handleBuy} content='Buy' />
-        <Button color='red' onClick={handleSell} content='Sell' />
+        <Button
+          color='green'
+          onClick={handleSubmitOrder}
+          name='Buy'
+          content='Buy'
+          disabled={_.isEmpty(order.symbol)}
+        />
+        <Button
+          color='red'
+          onClick={handleSubmitOrder}
+          name='Sell'
+          content='Sell'
+          disabled={_.isEmpty(order.symbol)}
+        />
       </Form>
-    </React.Fragment>
+    </Segment>
   );
 }
 
