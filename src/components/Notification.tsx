@@ -32,7 +32,7 @@ const useErrorNotifications = (order: SingleTableState<any>, ref: React.MutableR
 };
 
 function Notification() {
-  const { order } = useSelector((state: StoreState) => state);
+  const { order, websocket } = useSelector((state: StoreState) => state);
 
   /**
    * using references as below allows us to use useEffect
@@ -40,10 +40,30 @@ function Notification() {
    * This way it mimics componentDidUpdate()
    */
 
+  const prevWebSocket = React.useRef(websocket);
   const prevOrder = React.useRef(order.content);
   const firstUpdate = React.useRef(true);
 
   useErrorNotifications(order, firstUpdate);
+
+  React.useEffect(() => {
+    if (websocket.open !== prevWebSocket.current.open) {
+      const notificationOptions: ReactNotificationOptions = {
+        title: "BitMEX Connection",
+        message: "WebSocket Connection established. Happy Trading!",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: { duration: 5000, onScreen: true, pauseOnHover: true },
+      };
+
+      const successId = store.addNotification(notificationOptions);
+
+      return () => store.removeNotification(successId);
+    }
+  }, [websocket]);
 
   // effect to display successfully placed orders
   React.useEffect(() => {
@@ -60,12 +80,12 @@ function Notification() {
     const lastOrder = order.content[order.content.length - 1];
 
     // prevents notification to be rendered when:
-    // when canceled order has been cleared
-    // there is no order
-    // there was no order on previous render
-    // prevOrder length equals order length. This is the case when orders are set and the page gets reloaded
-    // self explaining
-    // workingIndicator of an order is initially false, so don't render notification
+    //  -canceled order has been cleared
+    //  -there is no order
+    //  -there was no order on previous render
+    //  -prevOrder length equals order length. This is the case when orders are set and the page gets reloaded
+    //  -self explaining
+    //  -workingIndicator of an order is initially false, so don't render notification
     if (
       prevOrder.current.length > order.content.length ||
       !order.content.length ||
