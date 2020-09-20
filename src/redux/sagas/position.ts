@@ -4,8 +4,7 @@ import { eventChannel } from "redux-saga";
 import { action } from "redux/actions";
 import { receivePositionMessage } from "redux/actions/position";
 import { CONNECT_WEBSOCKET, DISCONNECT_WEBSOCKET } from "redux/actions/websocket";
-import { getBitmexCredentials } from "config/api";
-import signMessage from "bitmex-realtime-api/lib/signMessage";
+import { getBitmexCredentials, getSignature } from "config/api";
 import { receiveMargin } from "redux/actions/margin";
 import { receiveOrder } from "redux/actions/order";
 
@@ -20,7 +19,7 @@ const connectWebsocket = async () => {
 
   return new Promise((resolve) => {
     socket.onopen = () => {
-      const signature = signMessage(secret, verb, endpoint, expires);
+      const signature = getSignature(secret, verb, endpoint, expires);
       const authMessage = JSON.stringify({
         op: "authKeyExpires",
         args: [key, expires, signature],
