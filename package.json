@@ -10,10 +10,12 @@
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
-    "bitmex-realtime-api": "^0.4.3",
+    "body-parser": "^1.19.0",
     "cors-anywhere": "^0.4.3",
     "cryptocurrency-icons": "^0.16.1",
+    "express": "^4.17.1",
     "form-data": "^3.0.0",
+    "http-proxy": "^1.18.1",
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.31",
     "react": "^16.13.1",
@@ -34,7 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev": "concurrently --allow-restart \"yarn:proxy\" \"yarn:start\"",
-    "proxy": "node proxy/index.ts"
+    "proxy": "node proxy/index.js"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -1,7 +1,4 @@
 import _ from "lodash";
-// import FormData from "form-data";
-import signMessage from "bitmex-realtime-api/lib/signMessage";
-import { getBitmexCredentials } from "config/api";
 
 const proxyHost = process.env.REACT_APP_PROXY_HOST || "localhost";
 const proxyPort = process.env.REACT_APP_PROXY_PORT || 8181;
@@ -45,26 +42,14 @@ const JSON_HEADERS: RequestHeaders = {
 export const callApi = (endpoint: Endpoint, method: HttpMethod, body?: any): Promise<ApiResult> => {
   if (!endpoint) throw new Error("missing Endpoint!");
 
-  const baseURL = `http://${proxyHost}:${proxyPort}/https://${
-    process.env.NODE_ENV === "production" ? "www" : "testnet"
-  }.bitmex.com`;
-  const url = baseURL + endpoint;
+  const url = `http://${proxyHost}:${proxyPort}${endpoint}`;
 
   console.log("%c url in fetchApi", "color: yellow;", url);
 
   if (body) body = JSON.stringify(body);
   console.log("%c body in fetchApi", "color: yellow;", body);
 
-  const { key, secret, expires } = getBitmexCredentials(
-    process.env.NODE_ENV === "production" ? true : false
-  );
-  const signature = signMessage(secret, method, endpoint, expires, body);
-
-  const headers: RequestHeaders = _.assign({}, JSON_HEADERS, {
-    "api-expires": expires,
-    "api-key": key,
-    "api-signature": signature,
-  });
+  const headers: RequestHeaders = _.assign({}, JSON_HEADERS);
 
   const init = { method, headers, body };
   console.log("%c init in fetchApi", "color: yellow;", init);
