@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider } from "semantic-ui-react";
+import { Grid, Divider } from "semantic-ui-react";
 
 import AccountStatistic from "components/AccountStatistic";
 import OrderForm from "components/Order/OrderForm";
@@ -9,7 +9,13 @@ const DefaultHeader = () => {
     <React.Fragment>
       <AccountStatistic />
       <Divider section />
-      <OrderForm />
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width='8'>
+            <OrderForm />
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     </React.Fragment>
   );
 };
