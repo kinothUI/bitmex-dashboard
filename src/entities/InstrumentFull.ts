@@ -2,6 +2,7 @@ import BaseEntity from "entities/BaseEntity";
 
 export default class InstrumentFull extends BaseEntity {
   public rootSymbol: string;
+  public symbol: string;
   public state: string;
   public typ: string;
   public listing: string;
@@ -107,6 +108,7 @@ export default class InstrumentFull extends BaseEntity {
     super(json);
 
     this.rootSymbol = json.rootSymbol;
+    this.symbol = json.symbol;
     this.state = json.state;
     this.typ = json.typ;
     this.listing = json.listing;
