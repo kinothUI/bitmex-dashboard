@@ -1,6 +1,9 @@
 import _ from "lodash";
 
-const proxyHost = process.env.REACT_APP_PROXY_HOST || "localhost";
+const isProdEnv = process.env.NODE_ENV === "production";
+const proxyHost = isProdEnv
+  ? process.env.REACT_APP_DOMAIN
+  : process.env.REACT_APP_PROXY_HOST || "localhost";
 const proxyPort = process.env.REACT_APP_PROXY_PORT || 8181;
 
 export interface RequestHeaders {
@@ -42,7 +45,9 @@ const JSON_HEADERS: RequestHeaders = {
 export const callApi = (endpoint: Endpoint, method: HttpMethod, body?: any): Promise<ApiResult> => {
   if (!endpoint) throw new Error("missing Endpoint!");
 
-  const url = `http://${proxyHost}:${proxyPort}${endpoint}`;
+  const url = isProdEnv
+    ? `https://${proxyHost}${endpoint}`
+    : `http://${proxyHost}:${proxyPort}${endpoint}`;
 
   console.log("%c url in fetchApi", "color: yellow;", url);
 

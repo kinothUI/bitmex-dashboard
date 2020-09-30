@@ -28,6 +28,7 @@ function OrderForm() {
   const [order, setOrder] = React.useState(InitialState);
   const dispatch = useDispatch();
   const state = useSelector((state: StoreState) => state);
+  const { instrument } = state;
 
   const handleOnChange = (event: React.BaseSyntheticEvent, data: any) =>
     setOrder({ ...order, [event.target.name]: event.target.value } as OrderState);
@@ -42,10 +43,12 @@ function OrderForm() {
     );
   };
 
-  const symbols = state.instrument.content.map((instrument) => ({
-    text: instrument.symbol,
-    value: instrument.symbol,
-  }));
+  const symbols = instrument.content
+    .map((instrument) => ({
+      text: instrument.symbol,
+      value: instrument.symbol,
+    }))
+    .sort();
 
   return (
     <Segment raised>
@@ -54,7 +57,8 @@ function OrderForm() {
           label='Instrument'
           name='symbol'
           placeholder='--- Select your Instrument ---'
-          loading={state.instrument.isLoading}
+          loading={instrument.isLoading}
+          disabled={instrument.isLoading}
           options={symbols}
           onChange={handleOnChangeDropdown}
         />

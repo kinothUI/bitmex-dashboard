@@ -10,7 +10,7 @@ const app = Express();
 const proxy = httpProxy.createProxyServer({});
 
 const HOST = process.env.NODE_PROXY_HOST || "localhost";
-const PORT = process.env.NODE_PROXY_PORT || 8080;
+const PORT = process.env.NODE_PROXY_PORT || 8181;
 
 const {
   REACT_APP_API_KEY_TN,
