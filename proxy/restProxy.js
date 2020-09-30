@@ -70,3 +70,5 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, HOST, () => console.log(`Proxy running on ${HOST}:${PORT}`));
+
+module.exports = signMessage;
