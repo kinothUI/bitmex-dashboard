@@ -4,36 +4,21 @@ import { eventChannel } from "redux-saga";
 import { action } from "redux/actions";
 import { receivePositionMessage } from "redux/actions/position";
 import { CONNECT_WEBSOCKET, DISCONNECT_WEBSOCKET } from "redux/actions/websocket";
-import { getBitmexCredentials, getSignature } from "config/api";
 import { receiveMargin } from "redux/actions/margin";
 import { receiveOrder } from "redux/actions/order";
 
-export const { url, endpoint, verb, key, secret, expires } = getBitmexCredentials(
-  process.env.NODE_ENV === "production" ? true : false
-);
+const isProdEnv = process.env.NODE_ENV === "production";
+const proxyHost = process.env.REACT_APP_DOMAIN || "localhost";
+const proxyPort = process.env.REACT_APP_WEBSOCKET_PROXY_PORT || 8443;
 
 let socket: WebSocket;
+const socketUrl = isProdEnv ? `wss://${proxyHost}/ws` : `ws://${proxyHost}:${proxyPort}`;
 
 const connectWebsocket = async () => {
-  socket = new WebSocket(url + endpoint);
+  socket = new WebSocket(socketUrl);
 
   return new Promise((resolve) => {
-    socket.onopen = () => {
-      const signature = getSignature(secret, verb, endpoint, expires);
-      const authMessage = JSON.stringify({
-        op: "authKeyExpires",
-        args: [key, expires, signature],
-      });
-      socket.send(authMessage);
-
-      const subscribePositionMessage = JSON.stringify({
-        op: "subscribe",
-        args: ["position", "margin", "order"],
-      });
-      socket.send(subscribePositionMessage);
-
-      resolve(socket);
-    };
+    socket.onopen = () => resolve(socket);
   });
 };
 

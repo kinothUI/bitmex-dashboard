@@ -2,7 +2,7 @@
 
 A self-hosted, mobile-friendly bitmex-dashboard mainly build to improve my web-development
 
-[![Build Status](https://travis-ci.com/kinothUI/bitmex-dashboard.svg?branch=master)](https://travis-ci.com/kinothUI/bitmex-dashboard)
+[![Build Status](https://travis-ci.com/kinothUI/bitmex-dashboard.svg?token=npdtKWtEe2tLdLfksyPn&branch=master)](https://travis-ci.com/kinothUI/bitmex-dashboard)
 
 #### Getting Started
 

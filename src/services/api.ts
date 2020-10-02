@@ -3,8 +3,8 @@ import _ from "lodash";
 const isProdEnv = process.env.NODE_ENV === "production";
 const proxyHost = isProdEnv
   ? process.env.REACT_APP_DOMAIN
-  : process.env.REACT_APP_PROXY_HOST || "localhost";
-const proxyPort = process.env.REACT_APP_PROXY_PORT || 8181;
+  : process.env.REACT_APP_REST_PROXY_HOST || "localhost";
+const proxyPort = process.env.REACT_APP_REST_PROXY_PORT || 8181;
 
 export interface RequestHeaders {
   [name: string]: string;
