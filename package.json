@@ -1,7 +1,7 @@
 {
   "name": "bitmex-dashboard",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -11,7 +11,6 @@
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
     "body-parser": "^1.19.0",
-    "cors-anywhere": "^0.4.3",
     "crypto": "^1.0.1",
     "cryptocurrency-icons": "^0.16.1",
     "express": "^4.17.1",
@@ -38,7 +37,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently --allow-restart \"yarn:proxy\" \"yarn:start\"",
     "proxy": "node proxy/index.js"
   },
   "eslintConfig": {
@@ -61,7 +59,6 @@
     "@types/react-notifications-component": "^2.4.0",
     "@types/react-redux": "^7.1.9",
     "@types/redux-logger": "^3.0.8",
-    "concurrently": "^5.3.0",
     "dotenv": "^8.2.0",
     "redux-devtools-extension": "^2.13.8"
   }
