@@ -8,6 +8,12 @@ import { action } from "redux/actions";
 import { StoreState } from "types";
 import { Dropdown } from "components/elements/form-inputs/Dropdown";
 
+export function useInstrument() {
+  const [instrument, setInstrument] = React.useState("");
+
+  return { selectedInstrument: instrument, setSelectedInstrument: setInstrument };
+}
+
 interface OrderState {
   orderQty: number;
   price: number;
@@ -29,6 +35,11 @@ function OrderForm() {
   const dispatch = useDispatch();
   const state = useSelector((state: StoreState) => state);
   const { instrument } = state;
+  const { selectedInstrument } = useInstrument();
+
+  React.useEffect(() => {
+    setOrder({ ...order, symbol: selectedInstrument });
+  }, [selectedInstrument, order]);
 
   const handleOnChange = (event: React.BaseSyntheticEvent, data: any) =>
     setOrder({ ...order, [event.target.name]: event.target.value } as OrderState);
@@ -61,6 +72,8 @@ function OrderForm() {
           disabled={instrument.isLoading}
           options={symbols}
           onChange={handleOnChangeDropdown}
+          // keine ahnung ob das so funktioniert
+          selected={selectedInstrument}
         />
         <Form.Input
           type='number'
