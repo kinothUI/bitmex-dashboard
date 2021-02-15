@@ -11,6 +11,7 @@ const {
   NODE_API_KEY_MN,
   NODE_API_SECRET_MN,
   NODE_API_SECRET_TN,
+  SSL_ENABLED,
 } = process.env;
 
 module.exports = isProdEnv
@@ -21,6 +22,7 @@ module.exports = isProdEnv
       nodeSocketProxyBindPort: NODE_WEBSOCKET_PROXY_BIND_PORT,
       nodeProxyBindAddress: NODE_PROXY_BIND_ADDRESS,
       nodeRestProxyBindPort: NODE_REST_PROXY_BIND_PORT,
+      sslEnabled: SSL_ENABLED,
     }
   : {
       url: NODE_BITMEX_URL_TN,
@@ -29,4 +31,5 @@ module.exports = isProdEnv
       nodeSocketProxyBindPort: NODE_WEBSOCKET_PROXY_BIND_PORT,
       nodeProxyBindAddress: NODE_PROXY_BIND_ADDRESS,
       nodeRestProxyBindPort: NODE_REST_PROXY_BIND_PORT,
+      sslEnabled: SSL_ENABLED,
     };
