@@ -6,9 +6,6 @@ import "react-notifications-component/dist/theme.css";
 import { StoreState, SingleTableState } from "types";
 
 const useErrorNotifications = (order: SingleTableState<any>, ref: React.MutableRefObject<any>) => {
-  // console.log("%c useErrorNotifications invoked", "color: pink");
-  // console.log("%c ref in useErrorNotifications", "color: pink", ref);
-
   return React.useEffect(() => {
     if (ref.current) return;
 
