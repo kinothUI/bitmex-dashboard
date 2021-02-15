@@ -11,6 +11,7 @@
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "cryptocurrency-icons": "^0.16.1",
     "express": "^4.17.1",
@@ -37,7 +38,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "proxy": "node proxy/index.js"
+    "proxy": "NODE_ENV=production node proxy/index.js",
+    "proxy:dev": "NODE_ENV=development nodemon proxy/index.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -60,6 +62,7 @@
     "@types/react-redux": "^7.1.9",
     "@types/redux-logger": "^3.0.8",
     "dotenv": "^8.2.0",
+    "nodemon": "^2.0.7",
     "redux-devtools-extension": "^2.13.8"
   }
 }
