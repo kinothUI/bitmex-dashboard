@@ -28,8 +28,8 @@
   transition: all 2s ease-in-out;
 }
 
-.position-instrument-symbol:hover {
+.underline-text:hover {
   padding-bottom: 2px;
-  border-bottom: 1px solid dashed;
-  cursor: pointer;
+  border-bottom: 2px #333 dashed;
+  cursor: alias;
 }

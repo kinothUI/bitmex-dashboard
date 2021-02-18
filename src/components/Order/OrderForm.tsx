@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Button, Segment } from "semantic-ui-react";
 
@@ -7,12 +7,7 @@ import { PLACE_ORDER } from "redux/actions/order";
 import { action } from "redux/actions";
 import { StoreState } from "types";
 import { Dropdown } from "components/elements/form-inputs/Dropdown";
-
-export function useInstrument() {
-  const [instrument, setInstrument] = React.useState("");
-
-  return { selectedInstrument: instrument, setSelectedInstrument: setInstrument };
-}
+import { PositionContext } from "components/Layout/Layout";
 
 interface OrderState {
   orderQty: number;
@@ -31,21 +26,17 @@ const InitialState: OrderState = {
 };
 
 function OrderForm() {
-  const [order, setOrder] = React.useState(InitialState);
+  const [order, setOrder] = useState(InitialState);
   const dispatch = useDispatch();
-  const state = useSelector((state: StoreState) => state);
-  const { instrument } = state;
-  const { selectedInstrument } = useInstrument();
+  const instrument = useSelector((state: StoreState) => state.instrument);
+  const { symbol, symbolCC, positionSize, positionSizeClickCount } = useContext(PositionContext);
+  const selectedSymbolIndex = instrument.content.map((item) => item.symbol).indexOf(symbol);
 
-  React.useEffect(() => {
-    setOrder({ ...order, symbol: selectedInstrument });
-  }, [selectedInstrument, order]);
-
-  const handleOnChange = (event: React.BaseSyntheticEvent, data: any) =>
-    setOrder({ ...order, [event.target.name]: event.target.value } as OrderState);
-
-  const handleOnChangeDropdown = (event: React.BaseSyntheticEvent, data: any) =>
-    setOrder({ ...order, [data.name]: data.value } as OrderState);
+  const handleOnChange = (event: React.BaseSyntheticEvent, data: any) => {
+    if (event.target.value)
+      setOrder({ ...order, [event.target.name]: event.target.value } as OrderState);
+    else setOrder({ ...order, [data.name]: data.value } as OrderState);
+  };
 
   const handleSubmitOrder = (event: React.BaseSyntheticEvent) => {
     event.preventDefault();
@@ -54,12 +45,18 @@ function OrderForm() {
     );
   };
 
-  const symbols = instrument.content
-    .map((instrument) => ({
-      text: instrument.symbol,
-      value: instrument.symbol,
-    }))
-    .sort();
+  useEffect(() => {
+    setOrder((old) => ({ ...old, symbol }));
+  }, [selectedSymbolIndex, symbolCC, symbol]);
+
+  useEffect(() => {
+    setOrder((old) => ({
+      ...old,
+      orderQty: positionSize < 0 ? positionSize - positionSize * 2 : positionSize,
+    }));
+  }, [positionSizeClickCount, positionSize]);
+
+  const options = instrument.content.map((item) => ({ text: item.symbol, value: item.symbol }));
 
   return (
     <Segment raised>
@@ -70,10 +67,10 @@ function OrderForm() {
           placeholder='--- Select your Instrument ---'
           loading={instrument.isLoading}
           disabled={instrument.isLoading}
-          options={symbols}
-          onChange={handleOnChangeDropdown}
-          // keine ahnung ob das so funktioniert
-          selected={selectedInstrument}
+          options={options}
+          value={order.symbol}
+          onChange={handleOnChange}
+          selection
         />
         <Form.Input
           type='number'
@@ -81,7 +78,7 @@ function OrderForm() {
           placeholder='Order Quantity'
           name='orderQty'
           onChange={handleOnChange}
-          defaultValue={0}
+          value={order.orderQty}
         />
         <Form.Input
           type='number'
@@ -89,7 +86,6 @@ function OrderForm() {
           placeholder='Order Limit Price'
           name='price'
           onChange={handleOnChange}
-          defaultValue={0}
         />
         <Button
           color='green'
