@@ -3,7 +3,7 @@ const http = require("http");
 const https = require("https");
 const fs = require("fs");
 const signMessage = require("./restProxy");
-const {
+let {
   nodeProxyBindAddress,
   nodeSocketProxyBindPort,
   sslEnabled,
@@ -17,27 +17,20 @@ console.log("NODE_ENV", process.env.NODE_ENV);
 const endpoint = "/realtime";
 const socketUrl = `wss://${url}`;
 
-const isProdEnv = process.env.NODE_ENV === "production";
-
-// const cert = isProdEnv ? fs.readFileSync(process.env.NODE_CERT, "utf-8") : "";
-// const certKey = isProdEnv ? fs.readFileSync(process.env.NODE_KEY, "utf-8") : "";
-
 const server =
-  sslEnabled
+  sslEnabled === 1
     ? https.createServer({
         cert: fs.readFileSync(process.env.NODE_CERT, "utf-8"),
         key: fs.readFileSync(process.env.NODE_KEY, "utf-8"),
       })
     : http.createServer();
-const wss = isProdEnv
-  ? new WebSocket.Server({
-      host: nodeProxyBindAddress,
-      port: nodeSocketProxyBindPort,
-      server,
-    })
-  : new WebSocket.Server({ host: nodeProxyBindAddress, port: nodeSocketProxyBindPort });
+const clientSocket = new WebSocket.Server({
+  host: nodeProxyBindAddress,
+  port: nodeSocketProxyBindPort,
+  server,
+});
 
-wss.on("connection", (ws, req) => {
+clientSocket.on("connection", (socketSelf, req) => {
   const bitmexSocket = new WebSocket(socketUrl + endpoint);
 
   bitmexSocket.onopen = () => {
@@ -51,10 +44,13 @@ wss.on("connection", (ws, req) => {
     });
     bitmexSocket.send(subscribeMessage);
 
-    bitmexSocket.onmessage = (event) =>
-      ws.send(event.data, (err) => {
-        if (err) console.log("some error happend", err);
-      });
+    bitmexSocket.onmessage = (event) => {
+      if (socketSelf.readyState === 1) {
+        socketSelf.send(event.data, (err) => {
+          if (err) console.log("some error happend", err);
+        });
+      }
+    };
   };
 });
 
