@@ -56,7 +56,7 @@ function OrderForm() {
     }));
   }, [positionSizeClickCount, positionSize]);
 
-  const options = instrument.content.map((item) => ({ text: item.symbol, value: item.symbol }));
+  const options = instrument.content.map((item) => ({ text: item.symbol, value: item.symbol })).sort((a, b) => a.text > b.text ? 0 : (a.text === b.text ? 0 : -1));
 
   return (
     <Segment raised>
